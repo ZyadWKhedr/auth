@@ -5,9 +5,22 @@ class InputValidator {
     return regex.hasMatch(value) ? null : 'Invalid email format';
   }
 
-  static String? validatePassword(String? value) {
-    if (value == null || value.isEmpty) return 'Password is required';
-    if (value.length < 6) return 'Password must be at least 6 characters';
-    return null;
-  }
+ static String? validatePassword(String? value) {
+  if (value == null || value.isEmpty) return 'Password is required';
+  if (value.length < 6) return 'Password must be at least 6 characters';
+
+  // Optional: Check for uppercase, lowercase, and special characters
+  final hasUpperCase = RegExp(r'[A-Z]').hasMatch(value);
+  final hasLowerCase = RegExp(r'[a-z]').hasMatch(value);
+  final hasDigit = RegExp(r'[0-9]').hasMatch(value);
+  final hasSpecialChar = RegExp(r'[@$!%*?&]').hasMatch(value);
+
+  if (!hasUpperCase) return 'Password must contain at least one uppercase letter';
+  if (!hasLowerCase) return 'Password must contain at least one lowercase letter';
+  if (!hasDigit) return 'Password must contain at least one number';
+  if (!hasSpecialChar) return 'Password must contain at least one special character';
+
+  return null;
+}
+
 }

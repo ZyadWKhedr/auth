@@ -1,10 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AnimatedButton extends StatefulWidget {
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
   final Widget child;
+  final Duration duration;
+  final double minScale;
+  final Curve curve;
+  final EdgeInsetsGeometry? padding;
+  final Color? splashColor;
+  final BorderRadius? borderRadius;
+  final bool enabled;
 
-  const AnimatedButton({super.key, required this.onTap, required this.child});
+  const AnimatedButton({
+    super.key,
+    required this.onTap,
+    required this.child,
+    this.duration = const Duration(milliseconds: 150),
+    this.minScale = 0.95,
+    this.curve = Curves.easeOut,
+    this.padding,
+    this.splashColor,
+    this.borderRadius,
+    this.enabled = true,
+  });
 
   @override
   State<AnimatedButton> createState() => _AnimatedButtonState();
@@ -13,32 +32,79 @@ class AnimatedButton extends StatefulWidget {
 class _AnimatedButtonState extends State<AnimatedButton>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
-  late Animation<double> _animation;
+  late Animation<double> _scaleAnimation;
+  late Animation<Color?> _colorAnimation;
 
   @override
   void initState() {
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 150),
+      duration: widget.duration,
     );
 
-    _animation = Tween<double>(begin: 1.0, end: 0.9).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
+    _scaleAnimation = Tween<double>(begin: 1.0, end: widget.minScale).animate(
+      CurvedAnimation(parent: _animationController, curve: widget.curve),
     );
+
+    _colorAnimation = ColorTween(
+      begin: Colors.transparent,
+      end: widget.splashColor ?? Colors.black.withOpacity(0.1),
+    ).animate(_animationController);
   }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTapDown: (_) => _animationController.forward(),
-      onTapUp: (_) {
-        _animationController.reverse();
-        widget.onTap(); // Call once here
-      },
-      onTapCancel: () => _animationController.reverse(),
-      child: ScaleTransition(scale: _animation, child: widget.child),
+    return MouseRegion(
+      cursor:
+          widget.enabled && widget.onTap != null
+              ? SystemMouseCursors.click
+              : SystemMouseCursors.basic,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTapDown:
+            widget.enabled && widget.onTap != null
+                ? (_) => _animationController.forward()
+                : null,
+        onTapUp:
+            widget.enabled && widget.onTap != null ? (_) => _onTapUp() : null,
+        onTapCancel:
+            widget.enabled && widget.onTap != null
+                ? () => _animationController.reverse()
+                : null,
+        child: AnimatedBuilder(
+          animation: _animationController,
+          builder: (context, child) {
+            return Transform.scale(
+              scale: _scaleAnimation.value,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: _colorAnimation.value,
+                  borderRadius:
+                      widget.borderRadius ?? BorderRadius.circular(8.r),
+                ),
+                child: Padding(
+                  padding: widget.padding ?? EdgeInsets.all(12.r),
+                  child: Opacity(
+                    opacity: widget.enabled ? 1.0 : 0.6,
+                    child: child,
+                  ),
+                ),
+              ),
+            );
+          },
+          child: widget.child,
+        ),
+      ),
     );
+  }
+
+  void _onTapUp() {
+    _animationController.reverse().then((_) {
+      if (widget.enabled && widget.onTap != null) {
+        widget.onTap!();
+      }
+    });
   }
 
   @override
