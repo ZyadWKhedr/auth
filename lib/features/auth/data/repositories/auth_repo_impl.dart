@@ -1,6 +1,6 @@
-import 'package:auth/data/models/user_model.dart';
-import 'package:auth/domain/entities/user_entity.dart';
-import 'package:auth/domain/repositories/auth_repository.dart';
+import 'package:auth/features/auth/data/models/user_model.dart';
+import 'package:auth/features/auth/domain/entities/user_entity.dart';
+import 'package:auth/features/auth/domain/repositories/auth_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AuthRepoImpl implements AuthRepository {

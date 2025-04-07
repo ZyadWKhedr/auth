@@ -1,8 +1,8 @@
-import 'package:auth/data/repositories/auth_repo_impl.dart';
+import 'package:auth/features/auth/data/repositories/auth_repo_impl.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../domain/repositories/auth_repository.dart';
+import '../features/auth/domain/repositories/auth_repository.dart';
 
 final supabaseProvider = Provider((ref) => Supabase.instance.client);
 
