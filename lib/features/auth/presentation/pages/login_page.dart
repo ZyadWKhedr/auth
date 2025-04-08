@@ -1,3 +1,4 @@
+import 'package:auth/core/utils/input_validator.dart';
 import 'package:auth/features/auth/presentation/providers/auth_provider.dart';
 import 'package:auth/features/auth/presentation/widgets/animated_button.dart';
 import 'package:auth/features/auth/presentation/widgets/text_input_field.dart';
@@ -12,54 +13,117 @@ class LoginPage extends ConsumerStatefulWidget {
 }
 
 class _LoginPageState extends ConsumerState<LoginPage> {
-  final _formKey = GlobalKey<FormState>();
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+
+  String? _nameError;
+  String? _emailError;
+  String? _passwordError;
 
   void _login() async {
-    if (_formKey.currentState?.validate() ?? false) {
-      await ref
-          .read(authStateProvider.notifier)
-          .signIn(emailController.text.trim(), passwordController.text.trim());
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+    final name = _nameController.text.trim();
+
+    final nameValidation = InputValidator.validateName(name);
+    final emailValidation = InputValidator.validateEmail(email);
+    final passwordValidation = InputValidator.validatePassword(password);
+
+    setState(() {
+      _nameError = nameValidation;
+      _emailError = emailValidation;
+      _passwordError = passwordValidation;
+    });
+
+    if (emailValidation == null && passwordValidation == null) {
+      await ref.read(authStateProvider.notifier).signIn(email, password);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        TextInputField(
-          hintText: 'Email',
-          obscureText: false,
-          onChanged: (String value) {},
-        ),
-        TextInputField(
-          hintText: 'Password',
-          obscureText: true,
-          onChanged: (String value) {},
-        ),
-        AnimatedButton(
-          onTap: () {},
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeInOut,
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: const Color(0xffF5D973),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Text(
-              "Sign in",
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
+    final state = ref.watch(authStateProvider);
+    final isLoading = state.isLoading;
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              /// Email Field
+              TextInputField(
+                hintText: 'Name',
+                controller: _nameController,
+                errorText: _nameError,
+                keyboardType: TextInputType.name,
+                textInputAction: TextInputAction.next,
+                onChanged: (_) {
+                  setState(() {
+                    _emailError = null;
+                  });
+                },
               ),
-            ),
+              const SizedBox(height: 16),
+
+              /// Email Field
+              TextInputField(
+                hintText: 'Email',
+                controller: _emailController,
+                errorText: _emailError,
+                keyboardType: TextInputType.emailAddress,
+                textInputAction: TextInputAction.next,
+                onChanged: (_) {
+                  setState(() {
+                    _emailError = null;
+                  });
+                },
+              ),
+              const SizedBox(height: 16),
+
+              /// Password Field
+              TextInputField(
+                hintText: 'Password',
+                controller: _passwordController,
+                errorText: _passwordError,
+                obscureText: true,
+                textInputAction: TextInputAction.done,
+                onChanged: (_) {
+                  setState(() {
+                    _passwordError = null;
+                  });
+                },
+              ),
+              const SizedBox(height: 32),
+
+              /// Login Button
+              AnimatedButton(
+                onTap: isLoading ? null : _login,
+                splashColor: Colors.blue.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(12),
+                child: Center(
+                  child: Text(
+                    isLoading ? 'Logging in...' : 'Login',
+                    style: Theme.of(
+                      context,
+                    ).textTheme.titleMedium?.copyWith(color: Colors.black),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
-      ],
+      ),
     );
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 }
