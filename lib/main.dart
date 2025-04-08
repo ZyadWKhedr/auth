@@ -1,11 +1,13 @@
 import 'package:auth/core/constants/app_keys.dart' as SupabaseConstants;
 import 'package:auth/features/auth/presentation/pages/auth_view.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'core/theme/theme_notifier.dart';
 import 'core/theme/app_theme.dart';
+import 'package:device_preview/device_preview.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,7 +17,13 @@ Future<void> main() async {
     anonKey: SupabaseConstants.supabaseAnonKey,
     debug: true,
   );
-  runApp(const ProviderScope(child: MyApp()));
+  runApp(
+    DevicePreview(
+      // Wrap ProviderScope with DevicePreview
+      enabled: !kReleaseMode, // Disable in production
+      builder: (context) => const ProviderScope(child: MyApp()),
+    ),
+  );
 }
 
 class MyApp extends ConsumerWidget {

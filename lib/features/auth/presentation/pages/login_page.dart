@@ -1,9 +1,12 @@
 import 'package:auth/core/utils/input_validator.dart';
 import 'package:auth/features/auth/presentation/providers/auth_provider.dart';
 import 'package:auth/features/auth/presentation/widgets/animated_button.dart';
+import 'package:auth/features/auth/presentation/widgets/or_divider.dart';
+import 'package:auth/features/auth/presentation/widgets/social_auth_buttons.dart';
 import 'package:auth/features/auth/presentation/widgets/text_input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
@@ -13,7 +16,6 @@ class LoginPage extends ConsumerStatefulWidget {
 }
 
 class _LoginPageState extends ConsumerState<LoginPage> {
-  final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
@@ -87,6 +89,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             ),
           ),
         ),
+        OrDivider(),
+        SocialAuthButtons(onGooglePressed: () {}, onFacebookPressed: () {}),
+        SizedBox(height: 50.h),
       ],
     );
   }

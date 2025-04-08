@@ -13,40 +13,76 @@ class AuthView extends StatefulWidget {
 
 class _AuthViewState extends State<AuthView> {
   bool _showSignIn = true;
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      resizeToAvoidBottomInset:
-          false, // Prevent scaffold body from resizing when keyboard appears
-      body: Stack(
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 250, 16, 0),
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 400),
-              transitionBuilder: (Widget child, Animation<double> animation) {
-                return FadeTransition(opacity: animation, child: child);
-              },
-              child: _showSignIn ? const LoginPage() : const SignUpPage(),
+      resizeToAvoidBottomInset: true, // Changed to true
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            controller: _scrollController,
+            physics: const ClampingScrollPhysics(),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: IntrinsicHeight(
+                child: Stack(
+                  children: [
+                    // Background shapes
+                    AnimatedShape(
+                      color: const Color(0xff595DC6),
+                      title: 'Welcome back',
+                    ),
+                    AnimatedShape(
+                      color: const Color(0xffFC5F8E),
+                      title: 'Create Account',
+                      show: !_showSignIn,
+                    ),
+
+                    // Content area
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(
+                        16,
+                        MediaQuery.of(context).size.height * 0.35,
+                        16,
+                        20,
+                      ),
+                      child: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 400),
+                        child:
+                            _showSignIn
+                                ? const LoginPage()
+                                : const SignUpPage(),
+                      ),
+                    ),
+
+                    // Switch button
+                    Positioned(
+                      top: MediaQuery.of(context).padding.top + 20,
+                      right: 20,
+                      child: AuthSwitchButton(
+                        showSignIn: _showSignIn,
+                        onTap: () {
+                          setState(() {
+                            _showSignIn = !_showSignIn;
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
-          ),
-          AnimatedShape(color: Color(0xff595DC6), title: 'Welcome back'),
-          AnimatedShape(
-            color: Color(0xffFC5F8E),
-            title: 'Create Account',
-            show: !_showSignIn,
-          ),
-          AuthSwitchButton(
-            showSignIn: _showSignIn,
-            onTap: () {
-              setState(() {
-                _showSignIn = !_showSignIn;
-              });
-            },
-          ),
-        ],
+          );
+        },
       ),
     );
   }

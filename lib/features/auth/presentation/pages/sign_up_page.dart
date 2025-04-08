@@ -1,9 +1,12 @@
 import 'package:auth/core/utils/input_validator.dart';
 import 'package:auth/features/auth/presentation/providers/auth_provider.dart';
 import 'package:auth/features/auth/presentation/widgets/animated_button.dart';
+import 'package:auth/features/auth/presentation/widgets/or_divider.dart';
+import 'package:auth/features/auth/presentation/widgets/social_auth_buttons.dart';
 import 'package:auth/features/auth/presentation/widgets/text_input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SignUpPage extends ConsumerStatefulWidget {
   const SignUpPage({super.key});
@@ -61,7 +64,7 @@ class _LoginPageState extends ConsumerState<SignUpPage> {
             });
           },
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16.h),
 
         TextInputField(
           hintText: 'Email',
@@ -89,7 +92,7 @@ class _LoginPageState extends ConsumerState<SignUpPage> {
             });
           },
         ),
-        const SizedBox(height: 32),
+        SizedBox(height: 32.h),
 
         /// Login Button
         AnimatedButton(
@@ -105,6 +108,9 @@ class _LoginPageState extends ConsumerState<SignUpPage> {
             ),
           ),
         ),
+        OrDivider(),
+        SocialAuthButtons(onGooglePressed: () {}, onFacebookPressed: () {}),
+        SizedBox(height: 50.h),
       ],
     );
   }
