@@ -32,10 +32,10 @@ class _AuthViewState extends State<AuthView> {
               child: _showSignIn ? const LoginPage() : const SignUpPage(),
             ),
           ),
-          AnimatedShape(color: Color(0xff595DC6), title: 'Create Account'),
+          AnimatedShape(color: Color(0xff595DC6), title: 'Welcome back'),
           AnimatedShape(
             color: Color(0xffFC5F8E),
-            title: 'Welcome Back',
+            title: 'Create Account',
             show: !_showSignIn,
           ),
           AuthSwitchButton(

@@ -8,7 +8,7 @@ class AnimatedButton extends StatefulWidget {
   final double minScale;
   final Curve curve;
   final EdgeInsetsGeometry? padding;
-  final Color? splashColor;
+  final Color? backgroundColor;
   final BorderRadius? borderRadius;
   final bool enabled;
 
@@ -20,7 +20,7 @@ class AnimatedButton extends StatefulWidget {
     this.minScale = 0.95,
     this.curve = Curves.easeOut,
     this.padding,
-    this.splashColor,
+    this.backgroundColor,
     this.borderRadius,
     this.enabled = true,
   });
@@ -33,7 +33,6 @@ class _AnimatedButtonState extends State<AnimatedButton>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
-  late Animation<Color?> _colorAnimation;
 
   @override
   void initState() {
@@ -46,11 +45,6 @@ class _AnimatedButtonState extends State<AnimatedButton>
     _scaleAnimation = Tween<double>(begin: 1.0, end: widget.minScale).animate(
       CurvedAnimation(parent: _animationController, curve: widget.curve),
     );
-
-    _colorAnimation = ColorTween(
-      begin: Colors.transparent,
-      end: widget.splashColor ?? Colors.black.withOpacity(0.1),
-    ).animate(_animationController);
   }
 
   @override
@@ -79,7 +73,7 @@ class _AnimatedButtonState extends State<AnimatedButton>
               scale: _scaleAnimation.value,
               child: DecoratedBox(
                 decoration: BoxDecoration(
-                  color: _colorAnimation.value,
+                  color: widget.backgroundColor ?? Colors.blue,
                   borderRadius:
                       widget.borderRadius ?? BorderRadius.circular(8.r),
                 ),

@@ -1,46 +1,118 @@
+import 'package:auth/core/utils/input_validator.dart';
+import 'package:auth/features/auth/presentation/providers/auth_provider.dart';
 import 'package:auth/features/auth/presentation/widgets/animated_button.dart';
 import 'package:auth/features/auth/presentation/widgets/text_input_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class SignUpPage extends StatelessWidget {
+class SignUpPage extends ConsumerStatefulWidget {
   const SignUpPage({super.key});
 
   @override
+  ConsumerState<SignUpPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends ConsumerState<SignUpPage> {
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+
+  String? _nameError;
+  String? _emailError;
+  String? _passwordError;
+
+  void _signup() async {
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+    final name = _nameController.text.trim();
+
+    final nameValidation = InputValidator.validateName(name);
+    final emailValidation = InputValidator.validateEmail(email);
+    final passwordValidation = InputValidator.validatePassword(password);
+
+    setState(() {
+      _nameError = nameValidation;
+      _emailError = emailValidation;
+      _passwordError = passwordValidation;
+    });
+
+    if (emailValidation == null && passwordValidation == null) {
+      await ref.read(authStateProvider.notifier).signUp(name, email, password);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final state = ref.watch(authStateProvider);
+    final isLoading = state.isLoading;
+
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         TextInputField(
-          hintText: 'Email',
-          obscureText: false,
-          onChanged: (String value) {},
+          hintText: 'Name',
+          controller: _nameController,
+          errorText: _nameError,
+          keyboardType: TextInputType.name,
+          textInputAction: TextInputAction.next,
+          onChanged: (_) {
+            setState(() {
+              _emailError = null;
+            });
+          },
         ),
+        const SizedBox(height: 16),
+
+        TextInputField(
+          hintText: 'Email',
+          controller: _emailController,
+          errorText: _emailError,
+          keyboardType: TextInputType.emailAddress,
+          textInputAction: TextInputAction.next,
+          onChanged: (_) {
+            setState(() {
+              _emailError = null;
+            });
+          },
+        ),
+        const SizedBox(height: 16),
+
         TextInputField(
           hintText: 'Password',
+          controller: _passwordController,
+          errorText: _passwordError,
           obscureText: true,
-          onChanged: (String value) {},
+          textInputAction: TextInputAction.done,
+          onChanged: (_) {
+            setState(() {
+              _passwordError = null;
+            });
+          },
         ),
+        const SizedBox(height: 32),
+
+        /// Login Button
         AnimatedButton(
-          onTap: () {},
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeInOut,
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: const Color(0xffF5D973),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Text(
-              "Sign in",
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              ),
+          onTap: isLoading ? null : _signup,
+          borderRadius: BorderRadius.circular(12),
+          backgroundColor: const Color(0xffF5D973),
+          child: Center(
+            child: Text(
+              isLoading ? 'Signing Up...' : 'Sign UP',
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(color: Colors.black),
             ),
           ),
         ),
       ],
     );
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 }
