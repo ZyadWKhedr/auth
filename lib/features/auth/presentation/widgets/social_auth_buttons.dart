@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class SocialAuthButtons extends StatelessWidget {
@@ -14,18 +13,27 @@ class SocialAuthButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    // Sizes relative to screen width
+    final buttonSize = screenWidth * 0.14;
+    final iconSize = screenWidth * 0.06;
+    final spacing = screenWidth * 0.2;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // Google Button
         _buildSocialButton(
+          size: buttonSize,
+          iconSize: iconSize,
           onTap: onGooglePressed,
           icon: FontAwesomeIcons.google,
           color: Colors.red,
         ),
-        SizedBox(width: 80.w), // Responsive spacing
-        // Facebook Button
+        SizedBox(width: spacing),
         _buildSocialButton(
+          size: buttonSize,
+          iconSize: iconSize,
           onTap: onFacebookPressed,
           icon: FontAwesomeIcons.facebook,
           color: Colors.blue,
@@ -35,6 +43,8 @@ class SocialAuthButtons extends StatelessWidget {
   }
 
   Widget _buildSocialButton({
+    required double size,
+    required double iconSize,
     required VoidCallback onTap,
     required IconData icon,
     required Color color,
@@ -42,27 +52,21 @@ class SocialAuthButtons extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 60.w, // Fixed responsive width
-        height: 60.h, // Fixed responsive height
+        width: size,
+        height: size,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(20.r), // Responsive radius
-          border: Border.all(color: Colors.grey.shade300, width: 1.w),
+          borderRadius: BorderRadius.circular(size * 0.33),
+          border: Border.all(color: Colors.grey.shade300, width: 1),
           boxShadow: [
             BoxShadow(
               color: Colors.grey.withOpacity(0.1),
-              blurRadius: 10.r, // Responsive blur
-              spreadRadius: 2.r, // Responsive spread
+              blurRadius: 10,
+              spreadRadius: 2,
             ),
           ],
         ),
-        child: Center(
-          child: FaIcon(
-            icon,
-            color: color,
-            size: 24.sp, // Responsive icon size
-          ),
-        ),
+        child: Center(child: FaIcon(icon, color: color, size: iconSize)),
       ),
     );
   }
