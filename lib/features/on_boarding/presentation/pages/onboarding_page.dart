@@ -59,7 +59,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
             onPageChangeCallback:
                 (index) => setState(() => currentPage = index),
             liquidController: controller,
-            enableLoop: false,
+            enableLoop: true,
             waveType: WaveType.liquidReveal,
           ),
           Positioned(
