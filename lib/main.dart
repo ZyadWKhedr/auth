@@ -20,12 +20,7 @@ Future<void> main() async {
     anonKey: SupabaseConstants.supabaseAnonKey,
     debug: true,
   );
-  runApp(
-    DevicePreview(
-      enabled: !kReleaseMode,
-      builder: (context) => const ProviderScope(child: MyApp()),
-    ),
-  );
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends ConsumerWidget {
@@ -49,7 +44,7 @@ class MyApp extends ConsumerWidget {
               minTextAdapt: true,
               splitScreenMode: true,
             );
-            return ChatPage();
+            return AuthView();
           },
         ),
       ),
