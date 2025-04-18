@@ -25,7 +25,7 @@ class _AuthViewState extends State<AuthView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      resizeToAvoidBottomInset: true, // Changed to true
+      resizeToAvoidBottomInset: true,
       body: LayoutBuilder(
         builder: (context, constraints) {
           return SingleChildScrollView(
@@ -65,17 +65,13 @@ class _AuthViewState extends State<AuthView> {
                     ),
 
                     // Switch button
-                    Positioned(
-                      top: MediaQuery.of(context).padding.top + 20,
-                      right: 20,
-                      child: AuthSwitchButton(
-                        showSignIn: _showSignIn,
-                        onTap: () {
-                          setState(() {
-                            _showSignIn = !_showSignIn;
-                          });
-                        },
-                      ),
+                    AuthSwitchButton(
+                      showSignIn: _showSignIn,
+                      onTap: () {
+                        setState(() {
+                          _showSignIn = !_showSignIn;
+                        });
+                      },
                     ),
                   ],
                 ),

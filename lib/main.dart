@@ -42,7 +42,7 @@ class MyApp extends ConsumerWidget {
               minTextAdapt: true,
               splitScreenMode: true,
             );
-            return OnboardingPage();
+            return AuthView();
           },
         ),
       ),
